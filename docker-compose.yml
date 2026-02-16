@@ -1,0 +1,30 @@
+services:
+  microbio-db:
+    image: mysql:8.0
+    container_name: microbio-db
+    environment:
+      MYSQL_ROOT_PASSWORD: BioUser.01
+      MYSQL_DATABASE: microbio
+      MYSQL_USER: biouser
+      MYSQL_PASSWORD: BioUser.01
+    ports:
+      - "3312:3312"
+    volumes:
+      - microbio-db-data:/var/lib/mysql
+
+  microbio-app:
+    image: microbio-app
+    container_name: microbio-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=microbio-db;Port=3306;Database=microbio;User=biouser;Password=BioUser.01;
+    ports:
+      - "5000:5000"
+    depends_on:
+      - microbio-db
+
+volumes:
+  microbio-db-data:
+  
