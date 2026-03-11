@@ -30,6 +30,19 @@ Este backend proporciona una base sólida, escalable y profesional para gestiona
 *   **Inyección de Dependencias:** Gestión nativa de servicios y repositorios.
 *   **Respuestas Estandarizadas:** Todas las respuestas de la API siguen el formato `ApiResponse<T>`, garantizando coherencia para el frontend.
 
+## 🔮 Futuras Mejoras y Buenas Prácticas
+
+Para llevar este proyecto al siguiente nivel de robustez y profesionalismo, se consideran las siguientes implementaciones:
+
+*   **Refresh Tokens:** Implementación de un sistema de rotación de tokens para mejorar la seguridad y la experiencia de usuario sin requerir logins constantes.
+*   **Seguridad Avanzada con Bearer Tokens:** Restricción granular de endpoints sensibles mediante políticas de autorización basadas en roles y claims.
+*   **Validación con FluentValidation:** Desacoplar la lógica de validación de los DTOs para un código más limpio y mantenible.
+*   **Logging Centralizado:** Integración con **Serilog** para persistir logs en archivos, bases de datos o servicios en la nube (Seq, Azure Application Insights).
+*   **Pruebas Automatizadas:** Cobertura de tests unitarios con **xUnit** y tests de integración para asegurar la estabilidad del sistema.
+*   **Rate Limiting:** Protección contra ataques de fuerza bruta y abuso de la API limitando el número de peticiones por cliente.
+*   **Caché de Datos:** Implementación de **Redis** o memoria caché para endpoints de alta demanda como la lista de ingredientes o recetas.
+*   **CI/CD Pipelines:** Automatización de despliegues mediante GitHub Actions para garantizar que cada cambio pase por pruebas y se despliegue de forma segura.
+
 ## 💾 Modelo de Datos (Principales Entidades)
 
 *   `User` (Gestionado por ASP.NET Identity)
@@ -50,4 +63,3 @@ Este backend proporciona una base sólida, escalable y profesional para gestiona
 ---
 
 ## 🧑‍💻 Desarrollado por: **Feith Noir**
-### Optimizado por: **Gemini CLI (Senior Developer Mode)**
