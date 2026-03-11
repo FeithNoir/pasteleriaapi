@@ -39,6 +39,7 @@ namespace Pasteleria.Business.Services
         public async Task<Result<InventoryItemDto>> AddInventoryItemAsync(CreateInventoryItemDto inventoryItemDto)
         {
             var inventoryItem = _mapper.Map<InventoryItem>(inventoryItemDto);
+            inventoryItem.Id = Guid.NewGuid();
             await _inventoryItemRepository.AddAsync(inventoryItem);
             var createdInventoryItemDto = _mapper.Map<InventoryItemDto>(inventoryItem);
             return Result<InventoryItemDto>.Success(createdInventoryItemDto);

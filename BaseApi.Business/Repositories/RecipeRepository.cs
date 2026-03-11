@@ -30,7 +30,7 @@ namespace Pasteleria.Business.Repositories
 
         public async Task<List<Recipe>> GetAllAsync()
         {
-            return await _context.Recipes.AsNoTracking().Include(r => r.RecipeIngredients).ThenInclude(ri => ri.Ingredient).ToListAsync();
+            return await _context.Recipes.AsNoTracking().ToListAsync();
         }
 
         public async Task<Recipe> GetByIdAsync(Guid id)

@@ -1,4 +1,4 @@
-﻿using Pasteleria.Shared.Models;
+using Pasteleria.Shared.Models;
 
 namespace Pasteleria.Shared.DTOs
 {
@@ -6,10 +6,8 @@ namespace Pasteleria.Shared.DTOs
     {
         public Guid Id { get; set; }
         public Guid RecipeId { get; set; }
-        public Recipe Recipe { get; set; } = new Recipe();
-
         public Guid IngredientId { get; set; }
-        public Ingredient Ingredient { get; set; } = new Ingredient();
+        public IngredientDto? Ingredient { get; set; }
 
         public decimal Quantity { get; set; }
         public string Unit { get; set; } = string.Empty;
@@ -17,12 +15,7 @@ namespace Pasteleria.Shared.DTOs
 
     public class CreateRecipeIngredientDto
     {
-        public Guid RecipeId { get; set; }
-        public Recipe Recipe { get; set; } = new Recipe();
-
         public Guid IngredientId { get; set; }
-        public Ingredient Ingredient { get; set; } = new Ingredient();
-
         public decimal Quantity { get; set; }
         public string Unit { get; set; } = string.Empty;
     }
@@ -30,12 +23,8 @@ namespace Pasteleria.Shared.DTOs
     public class ListRecipeIngredientDto
     {
         public Guid Id { get; set; }
-        public Guid RecipeId { get; set; }
-        public Recipe Recipe { get; set; } = new Recipe();
-
         public Guid IngredientId { get; set; }
-        public Ingredient Ingredient { get; set; } = new Ingredient();
-
+        public string IngredientName { get; set; } = string.Empty;
         public decimal Quantity { get; set; }
         public string Unit { get; set; } = string.Empty;
     }

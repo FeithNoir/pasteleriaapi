@@ -39,6 +39,14 @@ namespace Pasteleria.Business.Services
         public async Task<Result<RecipeDto>> AddRecipeAsync(CreateRecipeDto recipeDto)
         {
             var recipe = _mapper.Map<Recipe>(recipeDto);
+            recipe.Id = Guid.NewGuid();
+            
+            foreach (var ri in recipe.RecipeIngredients)
+            {
+                ri.Id = Guid.NewGuid();
+                ri.RecipeId = recipe.Id;
+            }
+
             await _recipeRepository.AddAsync(recipe);
             var createdRecipeDto = _mapper.Map<RecipeDto>(recipe);
             return Result<RecipeDto>.Success(createdRecipeDto);

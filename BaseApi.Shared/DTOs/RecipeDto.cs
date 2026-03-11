@@ -1,4 +1,4 @@
-﻿using Pasteleria.Shared.Models;
+using Pasteleria.Shared.Models;
 
 namespace Pasteleria.Shared.DTOs
 {
@@ -8,12 +8,12 @@ namespace Pasteleria.Shared.DTOs
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Instructions { get; set; } = string.Empty;
-        public decimal TotalCost { get; private set; }
+        public decimal TotalCost { get; set; }
         public decimal SuggestedPrice { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
 
-        // Navigation properties
-        public ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
+        // DTOs instead of Entities to avoid redundancy and circular references
+        public List<RecipeIngredientDto> RecipeIngredients { get; set; } = new List<RecipeIngredientDto>();
     }
 
     public class CreateRecipeDto
@@ -24,8 +24,8 @@ namespace Pasteleria.Shared.DTOs
         public decimal SuggestedPrice { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
 
-        // Navigation properties
-        public ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
+        // Only IDs and quantities needed for creation
+        public List<CreateRecipeIngredientDto> RecipeIngredients { get; set; } = new List<CreateRecipeIngredientDto>();
     }
 
     public class ListRecipeDto
@@ -33,7 +33,8 @@ namespace Pasteleria.Shared.DTOs
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public decimal TotalCost { get; private set; }
+        public decimal TotalCost { get; set; }
         public decimal SuggestedPrice { get; set; }
+        // No nested data here to keep lists light
     }
 }

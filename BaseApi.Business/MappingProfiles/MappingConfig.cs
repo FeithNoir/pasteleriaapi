@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Base.Shared.Auth.Dtos;
 using Base.Shared.Models;
 using Pasteleria.Shared.DTOs;
@@ -29,17 +29,22 @@ namespace Base.Business.MappingProfiles
             // Inventory
             CreateMap<InventoryItemDto, InventoryItem>().ReverseMap();
             CreateMap<CreateInventoryItemDto, InventoryItem>().ReverseMap();
-            CreateMap<ListInventoryItemDto, InventoryItem>().ReverseMap();
+            CreateMap<ListInventoryItemDto, InventoryItem>()
+                .ForMember(dest => dest.Ingredient, opt => opt.Ignore()) // Ensure no entity leak
+                .ReverseMap()
+                .ForMember(dest => dest.IngredientName, opt => opt.MapFrom(src => src.Ingredient.Name));
 
             // Recipe
             CreateMap<RecipeDto, Recipe>().ReverseMap();
             CreateMap<CreateRecipeDto, Recipe>().ReverseMap();
             CreateMap<ListRecipeDto, Recipe>().ReverseMap();
 
-            // RecipeInventory
+            // RecipeInventory (Ingredients in recipes)
             CreateMap<RecipeIngredientDto, RecipeIngredient>().ReverseMap();
-            CreateMap<CreateRecipeIngredientDto, RecipeIngredient>().ReverseMap();
-            CreateMap<ListRecipeIngredientDto, RecipeIngredient>().ReverseMap();
+            CreateMap<CreateRecipeIngredientDto, RecipeIngredient>();
+            CreateMap<ListRecipeIngredientDto, RecipeIngredient>()
+                .ReverseMap()
+                .ForMember(dest => dest.IngredientName, opt => opt.MapFrom(src => src.Ingredient.Name));
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Pasteleria.Business.Repositories
 
         public async Task<InventoryItem> GetByIdAsync(Guid id)
         {
-            var result = await _context.InventoryItems.FirstOrDefaultAsync(r => r.Id == id);
+            var result = await _context.InventoryItems.Include(i => i.Ingredient).AsNoTracking().FirstOrDefaultAsync(r => r.Id == id);
             return result == null ? throw new KeyNotFoundException($"InventoryItem with ID {id} not found.") : result;
         }
 

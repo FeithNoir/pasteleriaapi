@@ -47,7 +47,7 @@ namespace Base.Business.Services
 
             if (isCreated.Succeeded)
             {
-                await _authRepository.AddToRoleAsync(newUser, "Visitante");
+                await _authRepository.AddToRoleAsync(newUser, "Visitor");
                 await SendVerificationEmail(newUser, baseUrl);
 
                 return new AuthResult { Result = true };
@@ -165,7 +165,7 @@ namespace Base.Business.Services
         private async Task<string> GenerateTokenAsync(User user)
         {
             var roles = await _authRepository.GetRolesAsync(user);
-            var roleClaim = roles.FirstOrDefault() ?? "Visitante";
+            var roleClaim = roles.FirstOrDefault() ?? "User";
 
             var claims = new List<Claim>
             {
