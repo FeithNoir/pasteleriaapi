@@ -1,12 +1,56 @@
-﻿using System.Net;
+using System.Net;
 
-namespace Base.Shared.Extensions
+namespace Pasteleria.Shared.Extensions
 {
-    public class APIResponse
+    /// <summary>
+    /// Standardized response for all API endpoints.
+    /// </summary>
+    /// <typeparam name="T">Type of the data payload.</typeparam>
+    public class ApiResponse<T>
     {
-        public HttpStatusCode StatusCode {  get; set; }
-        public bool IsSuccessful { get; set; }
+        /// <summary>
+        /// Data payload returned from the request.
+        /// </summary>
+        public T? Data { get; set; }
+
+        /// <summary>
+        /// Human-readable message about the result of the request.
+        /// </summary>
+        public string Message { get; set; } = string.Empty;
+
+        /// <summary>
+        /// List of errors encountered if the request failed.
+        /// </summary>
         public List<string>? Errors { get; set; }
-        public object? Result { get; set; }
+
+        /// <summary>
+        /// Boolean flag indicating if the request was successful.
+        /// </summary>
+        public bool IsSuccess { get; set; }
+
+        /// <summary>
+        /// HTTP Status Code for the response.
+        /// </summary>
+        public int StatusCode { get; set; }
+
+        public ApiResponse() { }
+
+        public ApiResponse(T? data, string message = "", bool isSuccess = true, int statusCode = 200)
+        {
+            Data = data;
+            Message = message;
+            IsSuccess = isSuccess;
+            StatusCode = statusCode;
+        }
+
+        public static ApiResponse<T> SuccessResponse(T? data, string message = "Request processed successfully.", int statusCode = 200)
+        {
+            return new ApiResponse<T>(data, message, true, statusCode);
+        }
+
+        public static ApiResponse<T> FailureResponse(string message = "Request failed.", List<string>? errors = null, int statusCode = 400)
+        {
+            return new ApiResponse<T>(default, message, false, statusCode) { Errors = errors ?? new List<string>() };
+        }
     }
 }

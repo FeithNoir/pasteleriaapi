@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Pasteleria.Business.Interfaces.Services;
 using Pasteleria.Shared.DTOs;
+using Pasteleria.Shared.Extensions;
+using System.Net;
 
 namespace Pasteleria.Api.Controllers
 {
@@ -15,43 +17,100 @@ namespace Pasteleria.Api.Controllers
             _documentService = documentService;
         }
 
+        /// <summary>
+        /// Retrieves all uploaded documents.
+        /// </summary>
+        /// <returns>A list of documents.</returns>
         [HttpGet]
+        [ProducesResponseType(typeof(ApiResponse<List<ListDocumentDto>>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetAll()
         {
             var result = await _documentService.GetAllDocumentsAsync();
-            return result.IsSuccessful ? Ok(result) : BadRequest(result);
+            if (result.IsSuccessful)
+            {
+                return Ok(ApiResponse<List<ListDocumentDto>>.SuccessResponse(result.Data, "Documents retrieved successfully."));
+            }
+            return BadRequest(ApiResponse<List<ListDocumentDto>>.FailureResponse("Failed to retrieve documents.", result.Errors));
         }
 
+        /// <summary>
+        /// Retrieves a document by its ID.
+        /// </summary>
+        /// <param name="id">The document ID.</param>
+        /// <returns>The document details.</returns>
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(ApiResponse<DocumentDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiResponse<DocumentDto>), (int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _documentService.GetDocumentByIdAsync(id);
-            return result.IsSuccessful ? Ok(result) : NotFound(result);
+            if (result.IsSuccessful)
+            {
+                return Ok(ApiResponse<DocumentDto>.SuccessResponse(result.Data, "Document retrieved successfully."));
+            }
+            return NotFound(ApiResponse<DocumentDto>.FailureResponse($"Document with ID {id} not found.", result.Errors, (int)HttpStatusCode.NotFound));
         }
 
+        /// <summary>
+        /// Uploads a new document.
+        /// </summary>
+        /// <param name="documentDto">The document creation data.</param>
+        /// <returns>The created document.</returns>
         [HttpPost]
+        [ProducesResponseType(typeof(ApiResponse<DocumentDto>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ApiResponse<DocumentDto>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Add([FromBody] CreateDocumentDto documentDto)
         {
             var result = await _documentService.AddDocumentAsync(documentDto);
-            return result.IsSuccessful ? CreatedAtAction(nameof(GetById), new { id = result.Data.Id }, result) : BadRequest(result);
+            if (result.IsSuccessful)
+            {
+                var response = ApiResponse<DocumentDto>.SuccessResponse(result.Data, "Document uploaded successfully.", (int)HttpStatusCode.Created);
+                return CreatedAtAction(nameof(GetById), new { id = result.Data!.Id }, response);
+            }
+            return BadRequest(ApiResponse<DocumentDto>.FailureResponse("Failed to upload document.", result.Errors));
         }
 
+        /// <summary>
+        /// Updates document metadata.
+        /// </summary>
+        /// <param name="id">The ID of the document to update.</param>
+        /// <param name="documentDto">The updated document data.</param>
+        /// <returns>The updated document.</returns>
         [HttpPut("{id}")]
+        [ProducesResponseType(typeof(ApiResponse<DocumentDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiResponse<DocumentDto>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<DocumentDto>), (int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> Update(Guid id, [FromBody] DocumentDto documentDto)
         {
             if (id != documentDto.Id)
             {
-                return BadRequest("Document ID in URL does not match Document ID in body.");
+                return BadRequest(ApiResponse<DocumentDto>.FailureResponse("Document ID in URL does not match ID in body."));
             }
+
             var result = await _documentService.UpdateDocumentAsync(documentDto);
-            return result.IsSuccessful ? Ok(result) : BadRequest(result);
+            if (result.IsSuccessful)
+            {
+                return Ok(ApiResponse<DocumentDto>.SuccessResponse(result.Data, "Document updated successfully."));
+            }
+            return BadRequest(ApiResponse<DocumentDto>.FailureResponse("Failed to update document.", result.Errors));
         }
 
+        /// <summary>
+        /// Deletes a document.
+        /// </summary>
+        /// <param name="id">The ID of the document to delete.</param>
+        /// <returns>No content on success.</returns>
         [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await _documentService.DeleteDocumentAsync(id);
-            return result.IsSuccessful ? NoContent() : BadRequest(result);
+            if (result.IsSuccessful)
+            {
+                return NoContent();
+            }
+            return NotFound(ApiResponse<bool>.FailureResponse($"Document with ID {id} not found.", result.Errors, (int)HttpStatusCode.NotFound));
         }
     }
 }
