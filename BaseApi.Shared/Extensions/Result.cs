@@ -1,8 +1,8 @@
-﻿namespace Base.Shared.Extensions
+namespace Base.Shared.Extensions
 {
     public class Result<T>
     {
-        public Result(bool isSuccessful, T data, List<string> errors)
+        public Result(bool isSuccessful, T? data, List<string> errors)
         {
             IsSuccessful = isSuccessful;
             Data = data;
@@ -19,7 +19,7 @@
             return new Result<T>(false, default(T), errors);
         }
 
-        public T Data { get; set; }
+        public T? Data { get; set; }
         public bool IsSuccessful { get; set; }
         public List<string> Errors { get; set; }
     }

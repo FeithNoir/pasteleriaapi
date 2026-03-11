@@ -1,4 +1,4 @@
-﻿using Base.Data;
+using Base.Data;
 using Microsoft.EntityFrameworkCore;
 using Pasteleria.Business.Interfaces.Repositories;
 using Pasteleria.Shared.Models;
@@ -22,9 +22,9 @@ namespace Pasteleria.Business.Repositories
 
         public async Task DeleteAsync(Guid id)
         {
-            var recipe = GetByIdAsync(id);
-            _context.RecipeIngredients.RemoveRange(recipe.Result.RecipeIngredients);
-            _context.Recipes.Remove(recipe.Result);
+            var recipe = await GetByIdAsync(id);
+            _context.RecipeIngredients.RemoveRange(recipe.RecipeIngredients);
+            _context.Recipes.Remove(recipe);
             await _context.SaveChangesAsync();
         }
 
@@ -41,10 +41,10 @@ namespace Pasteleria.Business.Repositories
 
         public async Task UpdateAsync(Recipe dto)
         {
-            var existingRecipe = GetByIdAsync(dto.Id);
+            var existingRecipe = await GetByIdAsync(dto.Id);
             _context.Entry(existingRecipe).CurrentValues.SetValues(dto);
 
-            foreach (var existingIngredient in existingRecipe.Result.RecipeIngredients.ToList())
+            foreach (var existingIngredient in existingRecipe.RecipeIngredients.ToList())
             {
                 if (!dto.RecipeIngredients.Any(ri => ri.IngredientId == existingIngredient.IngredientId))
                 {
@@ -54,7 +54,7 @@ namespace Pasteleria.Business.Repositories
 
             foreach (var ingredientDto in dto.RecipeIngredients)
             {
-                var existingIngredient = existingRecipe.Result.RecipeIngredients
+                var existingIngredient = existingRecipe.RecipeIngredients
                     .FirstOrDefault(ri => ri.IngredientId == ingredientDto.IngredientId);
 
                 if (existingIngredient != null)
@@ -63,7 +63,7 @@ namespace Pasteleria.Business.Repositories
                 }
                 else
                 {
-                    existingRecipe.Result.RecipeIngredients.Add(new RecipeIngredient
+                    existingRecipe.RecipeIngredients.Add(new RecipeIngredient
                     {
                         IngredientId = ingredientDto.IngredientId,
                         Quantity = ingredientDto.Quantity,
@@ -77,8 +77,8 @@ namespace Pasteleria.Business.Repositories
 
         public async Task<decimal> CalculateTotalCostAsync(Guid recipeId)
         {
-            var recipe = GetByIdAsync(recipeId);
-            return recipe.Result.RecipeIngredients.Sum(ri => ri.Quantity * ri.Ingredient.CostPerUnit);
+            var recipe = await GetByIdAsync(recipeId);
+            return recipe.RecipeIngredients.Sum(ri => ri.Quantity * ri.Ingredient.CostPerUnit);
         }
     }
 }

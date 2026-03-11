@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Base.Shared.Models;
 
-namespace Base.Business.Interfaces.Repositories
+namespace Pasteleria.Business.Interfaces.Repositories
 {
     public interface IAuthRepository
     {
-        Task<User> FindByEmailAsync(string email);
-        Task<User> FindByIdAsync(string userId);
+        Task<User?> FindByEmailAsync(string email);
+        Task<User?> FindByIdAsync(string userId);
         Task<IdentityResult> CreateUserAsync(User user, string password);
         Task<IdentityResult> AddToRoleAsync(User user, string role);
         Task<IdentityResult> ConfirmEmailAsync(User user, string token);

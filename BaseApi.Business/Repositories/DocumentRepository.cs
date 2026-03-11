@@ -1,4 +1,4 @@
-﻿using Base.Data;
+using Base.Data;
 using Microsoft.EntityFrameworkCore;
 using Pasteleria.Business.Interfaces.Repositories;
 using Pasteleria.Shared.Models;
@@ -22,8 +22,8 @@ namespace Pasteleria.Business.Repositories
 
         public async Task DeleteAsync(Guid id)
         {
-            var result = GetByIdAsync(id);
-            _context.Documents.Remove(result.Result);
+            var result = await GetByIdAsync(id);
+            _context.Documents.Remove(result);
             await _context.SaveChangesAsync();
         }
 
@@ -34,14 +34,14 @@ namespace Pasteleria.Business.Repositories
 
         public async Task<Document> GetByIdAsync(Guid id)
         {
-            var result = await _context.Documents.AsNoTracking().FirstOrDefaultAsync(r => r.Id == id);
-            return result == null ? throw new KeyNotFoundException($"Recipe with ID {id} not found.") : result;
+            var result = await _context.Documents.FirstOrDefaultAsync(r => r.Id == id);
+            return result == null ? throw new KeyNotFoundException($"Document with ID {id} not found.") : result;
         }
 
         public async Task UpdateAsync(Document dto)
         {
-            var existingRecipe = GetByIdAsync(dto.Id);
-            _context.Entry(existingRecipe).CurrentValues.SetValues(dto);
+            var existingDocument = await GetByIdAsync(dto.Id);
+            _context.Entry(existingDocument).CurrentValues.SetValues(dto);
             await _context.SaveChangesAsync();
         }
     }

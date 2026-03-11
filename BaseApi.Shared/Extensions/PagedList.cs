@@ -1,4 +1,4 @@
-﻿namespace Base.Shared.Extensions
+namespace Base.Shared.Extensions
 {
     public class PagedList<T> //: List<T>
     {
@@ -18,6 +18,7 @@
         {
             Success = false;
             Errors = new List<string>();
+            Items = new List<T>();
         }
         /// <summary>
         /// Sirve para crear un objeto de tipo PagedList. Util en tablas de administración
@@ -43,13 +44,13 @@
         /// Total count corresponde a todos los registros que se encuentren en base de datos
         /// </summary>
         /// <param name="items">Corresponde al resultado esperado</param>
-        public PagedList(List<T> items)
+        public PagedList(List<T>? items)
         {
             TotalCount = items == null ? 0 : items.Count;
             PageSize = 1;
             CurrentPage = 1;
             TotalPages = 1;
-            Items = items;
+            Items = items ?? new List<T>();
             Errors = new List<string>();
             Success = true;
         }

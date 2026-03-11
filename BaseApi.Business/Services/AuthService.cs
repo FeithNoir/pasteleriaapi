@@ -1,6 +1,7 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Base.Business.Configuration;
-using Base.Business.Interfaces.Repositories;
+using Pasteleria.Business.Interfaces.Repositories;
+using Pasteleria.Business.Interfaces.Services;
 using Base.Shared.Auth.Auxiliar;
 using Base.Shared.Auth.Dtos;
 using Base.Shared.Models;
@@ -168,9 +169,9 @@ namespace Base.Business.Services
 
             var claims = new List<Claim>
             {
-                new Claim("id", user.Id),
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim("id", user.Id!),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email!),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email!),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToUniversalTime().ToString()),
                 new Claim("Role", roleClaim)
@@ -179,7 +180,7 @@ namespace Base.Business.Services
             if (!string.IsNullOrEmpty(user.FirstName)) claims.Add(new Claim("FirstName", user.FirstName));
             if (!string.IsNullOrEmpty(user.LastName)) claims.Add(new Claim("LastName", user.LastName));
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.Secret));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.Secret ?? string.Empty));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(

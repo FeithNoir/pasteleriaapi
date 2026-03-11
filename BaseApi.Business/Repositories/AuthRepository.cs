@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Base.Shared.Models;
-using Base.Business.Interfaces.Repositories;
+using Pasteleria.Business.Interfaces.Repositories;
 
-namespace Base.Data.Repositories
+namespace Pasteleria.Business.Repositories
 {
     public class AuthRepository : IAuthRepository
     {
@@ -13,14 +13,14 @@ namespace Base.Data.Repositories
             _userManager = userManager;
         }
 
-        public async Task<User> FindByEmailAsync(string email)
+        public async Task<User?> FindByEmailAsync(string email)
         {
-            return await _userManager.FindByEmailAsync(email) ?? throw new Exception("user not found.");
+            return await _userManager.FindByEmailAsync(email);
         }
 
-        public async Task<User> FindByIdAsync(string userId)
+        public async Task<User?> FindByIdAsync(string userId)
         {
-            return await _userManager.FindByIdAsync(userId) ?? throw new Exception("user not found.");
+            return await _userManager.FindByIdAsync(userId);
         }
 
         public async Task<IdentityResult> CreateUserAsync(User user, string password)

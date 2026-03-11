@@ -2,17 +2,13 @@ using AutoMapper;
 using Pasteleria.Business.Interfaces.Repositories;
 using Pasteleria.Business.Interfaces.Services;
 using Pasteleria.Shared.DTOs;
-<<<<<<< HEAD
 using Base.Shared.Extensions;
-=======
->>>>>>> a35fed2aeafc6041218fa22d78ef697c789d5bd7
 using Pasteleria.Shared.Models;
 
 namespace Pasteleria.Business.Services
 {
     public class IngredientService : IIngredientService
     {
-<<<<<<< HEAD
         private readonly IIngredientRepository _ingredientRepository;
         private readonly IMapper _mapper;
 
@@ -71,44 +67,6 @@ namespace Pasteleria.Business.Services
 
             await _ingredientRepository.DeleteAsync(id);
             return Result<bool>.Success(true);
-=======
-        private readonly IIngredientRepository _repository;
-        private readonly IMapper _mapper;
-
-        public IngredientService(IIngredientRepository repository, IMapper mapper)
-        {
-            _repository = repository;
-            _mapper = mapper;
-        }
-
-        public async Task AddAsync(CreateIngredientDto dto)
-        {
-            var ingredient = _mapper.Map<Ingredient>(dto);
-            await _repository.AddAsync(ingredient);
-        }
-
-        public async Task DeleteAsync(Guid id)
-        {
-            await _repository.DeleteAsync(id);
-        }
-
-        public async Task<List<ListIngredientDto>> GetAllAsync()
-        {
-            var ingredients = await _repository.GetAllAsync();
-            return _mapper.Map<List<ListIngredientDto>>(ingredients);
-        }
-
-        public async Task<IngredientDto> GetByIdAsync(Guid id)
-        {
-            var ingredient = await _repository.GetByIdAsync(id);
-            return _mapper.Map<IngredientDto>(ingredient);
-        }
-
-        public async Task UpdateAsync(UpdateIngredientDto dto)
-        {
-            var ingredient = _mapper.Map<Ingredient>(dto);
-            await _repository.UpdateAsync(ingredient);
->>>>>>> a35fed2aeafc6041218fa22d78ef697c789d5bd7
         }
     }
 }
