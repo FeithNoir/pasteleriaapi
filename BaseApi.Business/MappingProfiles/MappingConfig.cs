@@ -32,7 +32,7 @@ namespace Base.Business.MappingProfiles
             CreateMap<ListInventoryItemDto, InventoryItem>()
                 .ForMember(dest => dest.Ingredient, opt => opt.Ignore()) // Ensure no entity leak
                 .ReverseMap()
-                .ForMember(dest => dest.IngredientName, opt => opt.MapFrom(src => src.Ingredient.Name));
+                .ForMember(dest => dest.IngredientName, opt => opt.MapFrom(src => src.Ingredient != null ? src.Ingredient.Name : string.Empty));
 
             // Recipe
             CreateMap<RecipeDto, Recipe>().ReverseMap();
@@ -44,7 +44,7 @@ namespace Base.Business.MappingProfiles
             CreateMap<CreateRecipeIngredientDto, RecipeIngredient>();
             CreateMap<ListRecipeIngredientDto, RecipeIngredient>()
                 .ReverseMap()
-                .ForMember(dest => dest.IngredientName, opt => opt.MapFrom(src => src.Ingredient.Name));
+                .ForMember(dest => dest.IngredientName, opt => opt.MapFrom(src => src.Ingredient != null ? src.Ingredient.Name : string.Empty));
         }
     }
 }

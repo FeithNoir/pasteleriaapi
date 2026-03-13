@@ -23,8 +23,11 @@ namespace Pasteleria.Business.Repositories
         public async Task DeleteAsync(Guid id)
         {
             var result = await GetByIdAsync(id);
-            _context.Documents.Remove(result);
-            await _context.SaveChangesAsync();
+            if (result != null)
+            {
+                _context.Documents.Remove(result);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<List<Document>> GetAllAsync()
@@ -32,16 +35,14 @@ namespace Pasteleria.Business.Repositories
             return await _context.Documents.AsNoTracking().ToListAsync();
         }
 
-        public async Task<Document> GetByIdAsync(Guid id)
+        public async Task<Document?> GetByIdAsync(Guid id)
         {
-            var result = await _context.Documents.FirstOrDefaultAsync(r => r.Id == id);
-            return result == null ? throw new KeyNotFoundException($"Document with ID {id} not found.") : result;
+            return await _context.Documents.FirstOrDefaultAsync(r => r.Id == id);
         }
 
         public async Task UpdateAsync(Document dto)
         {
-            var existingDocument = await GetByIdAsync(dto.Id);
-            _context.Entry(existingDocument).CurrentValues.SetValues(dto);
+            _context.Documents.Update(dto);
             await _context.SaveChangesAsync();
         }
     }

@@ -23,9 +23,12 @@ namespace Pasteleria.Business.Repositories
         public async Task DeleteAsync(Guid id)
         {
             var recipe = await GetByIdAsync(id);
-            _context.RecipeIngredients.RemoveRange(recipe.RecipeIngredients);
-            _context.Recipes.Remove(recipe);
-            await _context.SaveChangesAsync();
+            if (recipe != null)
+            {
+                _context.RecipeIngredients.RemoveRange(recipe.RecipeIngredients);
+                _context.Recipes.Remove(recipe);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<List<Recipe>> GetAllAsync()
@@ -33,15 +36,16 @@ namespace Pasteleria.Business.Repositories
             return await _context.Recipes.AsNoTracking().ToListAsync();
         }
 
-        public async Task<Recipe> GetByIdAsync(Guid id)
+        public async Task<Recipe?> GetByIdAsync(Guid id)
         {
-            var result = await _context.Recipes.AsNoTracking().Include(r => r.RecipeIngredients).ThenInclude(ri => ri.Ingredient).FirstOrDefaultAsync(r => r.Id == id);
-            return result == null ? throw new KeyNotFoundException($"Recipe with ID {id} not found.") : result;
+            return await _context.Recipes.AsNoTracking().Include(r => r.RecipeIngredients).ThenInclude(ri => ri.Ingredient).FirstOrDefaultAsync(r => r.Id == id);
         }
 
         public async Task UpdateAsync(Recipe dto)
         {
             var existingRecipe = await GetByIdAsync(dto.Id);
+            if (existingRecipe == null) return;
+
             _context.Entry(existingRecipe).CurrentValues.SetValues(dto);
 
             foreach (var existingIngredient in existingRecipe.RecipeIngredients.ToList())
@@ -78,7 +82,7 @@ namespace Pasteleria.Business.Repositories
         public async Task<decimal> CalculateTotalCostAsync(Guid recipeId)
         {
             var recipe = await GetByIdAsync(recipeId);
-            return recipe.RecipeIngredients.Sum(ri => ri.Quantity * ri.Ingredient.CostPerUnit);
+            return recipe != null ? recipe.RecipeIngredients.Sum(ri => ri.Quantity * (ri.Ingredient?.CostPerUnit ?? 0)) : 0;
         }
     }
 }

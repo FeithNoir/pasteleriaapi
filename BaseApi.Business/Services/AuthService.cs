@@ -1,7 +1,5 @@
 using AutoMapper;
 using Base.Business.Configuration;
-using Pasteleria.Business.Interfaces.Repositories;
-using Pasteleria.Business.Interfaces.Services;
 using Base.Shared.Auth.Auxiliar;
 using Base.Shared.Auth.Dtos;
 using Base.Shared.Models;
@@ -9,6 +7,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Pasteleria.Business.Interfaces.Repositories;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;

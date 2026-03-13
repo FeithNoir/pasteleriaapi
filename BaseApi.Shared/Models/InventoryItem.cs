@@ -2,8 +2,8 @@
 {
     public class InventoryItem : BaseEntity
     {
-        public int IngredientId { get; set; }
-        public Ingredient Ingredient { get; set; } = new Ingredient();
+        public Guid IngredientId { get; set; }
+        public Ingredient? Ingredient { get; set; }
 
         public decimal CurrentQuantity { get; set; }
         public decimal MinimumQuantity { get; set; }

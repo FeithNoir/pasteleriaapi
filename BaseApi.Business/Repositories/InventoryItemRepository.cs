@@ -23,8 +23,11 @@ namespace Pasteleria.Business.Repositories
         public async Task DeleteAsync(Guid id)
         {
             var result = await GetByIdAsync(id);
-            _context.InventoryItems.Remove(result);
-            await _context.SaveChangesAsync();
+            if (result != null)
+            {
+                _context.InventoryItems.Remove(result);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<List<InventoryItem>> GetAllAsync()
@@ -32,16 +35,14 @@ namespace Pasteleria.Business.Repositories
             return await _context.InventoryItems.AsNoTracking().ToListAsync();
         }
 
-        public async Task<InventoryItem> GetByIdAsync(Guid id)
+        public async Task<InventoryItem?> GetByIdAsync(Guid id)
         {
-            var result = await _context.InventoryItems.Include(i => i.Ingredient).AsNoTracking().FirstOrDefaultAsync(r => r.Id == id);
-            return result == null ? throw new KeyNotFoundException($"InventoryItem with ID {id} not found.") : result;
+            return await _context.InventoryItems.Include(i => i.Ingredient).AsNoTracking().FirstOrDefaultAsync(r => r.Id == id);
         }
 
         public async Task UpdateAsync(InventoryItem dto)
         {
-            var existingInventoryItem = await GetByIdAsync(dto.Id);
-            _context.Entry(existingInventoryItem).CurrentValues.SetValues(dto);
+            _context.InventoryItems.Update(dto);
             await _context.SaveChangesAsync();
         }
     }

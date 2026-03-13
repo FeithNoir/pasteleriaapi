@@ -23,8 +23,11 @@ namespace Pasteleria.Business.Repositories
         public async Task DeleteAsync(Guid id)
         {
             var result = await GetByIdAsync(id);
-            _context.Ingredients.Remove(result);
-            await _context.SaveChangesAsync();
+            if (result != null)
+            {
+                _context.Ingredients.Remove(result);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<List<Ingredient>> GetAllAsync()
@@ -32,16 +35,14 @@ namespace Pasteleria.Business.Repositories
             return await _context.Ingredients.AsNoTracking().Include(ri => ri.RecipeIngredients).Include(i => i.InventoryItems).ToListAsync();
         }
 
-        public async Task<Ingredient> GetByIdAsync(Guid id)
+        public async Task<Ingredient?> GetByIdAsync(Guid id)
         {
-            var result = await _context.Ingredients.Include(ri=> ri.RecipeIngredients).Include(i => i.InventoryItems).FirstOrDefaultAsync(r => r.Id == id);
-            return result == null ? throw new KeyNotFoundException($"Ingredient with ID {id} not found.") : result;
+            return await _context.Ingredients.Include(ri=> ri.RecipeIngredients).Include(i => i.InventoryItems).FirstOrDefaultAsync(r => r.Id == id);
         }
 
         public async Task UpdateAsync(Ingredient dto)
         {
-            var existingIngredient = await GetByIdAsync(dto.Id);
-            _context.Entry(existingIngredient).CurrentValues.SetValues(dto);
+            _context.Ingredients.Update(dto);
             await _context.SaveChangesAsync();
         }
     }

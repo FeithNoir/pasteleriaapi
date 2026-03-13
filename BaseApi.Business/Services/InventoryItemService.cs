@@ -10,11 +10,13 @@ namespace Pasteleria.Business.Services
     public class InventoryItemService : IInventoryItemService
     {
         private readonly IInventoryItemRepository _inventoryItemRepository;
+        private readonly IIngredientRepository _ingredientRepository;
         private readonly IMapper _mapper;
 
-        public InventoryItemService(IInventoryItemRepository inventoryItemRepository, IMapper mapper)
+        public InventoryItemService(IInventoryItemRepository inventoryItemRepository, IIngredientRepository ingredientRepository, IMapper mapper)
         {
             _inventoryItemRepository = inventoryItemRepository;
+            _ingredientRepository = ingredientRepository;
             _mapper = mapper;
         }
 
@@ -38,24 +40,57 @@ namespace Pasteleria.Business.Services
 
         public async Task<Result<InventoryItemDto>> AddInventoryItemAsync(CreateInventoryItemDto inventoryItemDto)
         {
-            var inventoryItem = _mapper.Map<InventoryItem>(inventoryItemDto);
-            inventoryItem.Id = Guid.NewGuid();
-            await _inventoryItemRepository.AddAsync(inventoryItem);
-            var createdInventoryItemDto = _mapper.Map<InventoryItemDto>(inventoryItem);
-            return Result<InventoryItemDto>.Success(createdInventoryItemDto);
+            try
+            {
+                // Validate ingredient existence
+                var ingredient = await _ingredientRepository.GetByIdAsync(inventoryItemDto.IngredientId);
+                if (ingredient == null)
+                {
+                    return Result<InventoryItemDto>.Failure(new List<string> { $"Ingredient with ID {inventoryItemDto.IngredientId} not found." });
+                }
+
+                var inventoryItem = _mapper.Map<InventoryItem>(inventoryItemDto);
+                inventoryItem.Id = Guid.NewGuid();
+                inventoryItem.LastUpdated = DateTime.UtcNow;
+
+                await _inventoryItemRepository.AddAsync(inventoryItem);
+                
+                var createdInventoryItemDto = _mapper.Map<InventoryItemDto>(inventoryItem);
+                return Result<InventoryItemDto>.Success(createdInventoryItemDto);
+            }
+            catch (Exception ex)
+            {
+                return Result<InventoryItemDto>.Failure(new List<string> { "An error occurred while adding the inventory item.", ex.Message });
+            }
         }
 
         public async Task<Result<InventoryItemDto>> UpdateInventoryItemAsync(InventoryItemDto inventoryItemDto)
         {
-            var existingInventoryItem = await _inventoryItemRepository.GetByIdAsync(inventoryItemDto.Id);
-            if (existingInventoryItem == null)
+            try
             {
-                return Result<InventoryItemDto>.Failure(new List<string> { $"InventoryItem with ID {inventoryItemDto.Id} not found." });
-            }
+                var existingInventoryItem = await _inventoryItemRepository.GetByIdAsync(inventoryItemDto.Id);
+                if (existingInventoryItem == null)
+                {
+                    return Result<InventoryItemDto>.Failure(new List<string> { $"InventoryItem with ID {inventoryItemDto.Id} not found." });
+                }
 
-            _mapper.Map(inventoryItemDto, existingInventoryItem);
-            await _inventoryItemRepository.UpdateAsync(existingInventoryItem);
-            return Result<InventoryItemDto>.Success(inventoryItemDto);
+                // Validate ingredient existence if it's being changed
+                var ingredient = await _ingredientRepository.GetByIdAsync(inventoryItemDto.IngredientId);
+                if (ingredient == null)
+                {
+                    return Result<InventoryItemDto>.Failure(new List<string> { $"Ingredient with ID {inventoryItemDto.IngredientId} not found." });
+                }
+
+                _mapper.Map(inventoryItemDto, existingInventoryItem);
+                existingInventoryItem.LastUpdated = DateTime.UtcNow;
+
+                await _inventoryItemRepository.UpdateAsync(existingInventoryItem);
+                return Result<InventoryItemDto>.Success(inventoryItemDto);
+            }
+            catch (Exception ex)
+            {
+                return Result<InventoryItemDto>.Failure(new List<string> { "An error occurred while updating the inventory item.", ex.Message });
+            }
         }
 
         public async Task<Result<bool>> DeleteInventoryItemAsync(Guid id)
