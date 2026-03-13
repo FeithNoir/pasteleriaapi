@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Pasteleria.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -221,8 +223,7 @@ namespace Pasteleria.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    IngredientId = table.Column<int>(type: "INTEGER", nullable: false),
-                    IngredientId1 = table.Column<Guid>(type: "TEXT", nullable: false),
+                    IngredientId = table.Column<Guid>(type: "TEXT", nullable: false),
                     CurrentQuantity = table.Column<decimal>(type: "TEXT", nullable: false),
                     MinimumQuantity = table.Column<decimal>(type: "TEXT", nullable: false),
                     LastUpdated = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -234,8 +235,8 @@ namespace Pasteleria.Data.Migrations
                 {
                     table.PrimaryKey("PK_InventoryItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_InventoryItems_Ingredients_IngredientId1",
-                        column: x => x.IngredientId1,
+                        name: "FK_InventoryItems_Ingredients_IngredientId",
+                        column: x => x.IngredientId,
                         principalTable: "Ingredients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -268,6 +269,16 @@ namespace Pasteleria.Data.Migrations
                         principalTable: "Recipes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "7c280f2b-7c7d-4b8c-8f2c-5f2b7c7d4b8c", null, "Visitor", "VISITOR" },
+                    { "8d39103c-8d8e-5c9d-903d-6g3c8d8e5c9d", null, "User", "USER" },
+                    { "9e40214d-9e9f-6d0e-a14e-7h4d9e9f6d0e", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -308,9 +319,9 @@ namespace Pasteleria.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_InventoryItems_IngredientId1",
+                name: "IX_InventoryItems_IngredientId",
                 table: "InventoryItems",
-                column: "IngredientId1");
+                column: "IngredientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RecipeIngredients_IngredientId",

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Pasteleria.Data.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250905205404_init")]
-    partial class init
+    [Migration("20260313163219_ChangeHardDeleteToSoftDelete")]
+    partial class ChangeHardDeleteToSoftDelete
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -124,6 +124,26 @@ namespace Pasteleria.Data.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "7c280f2b-7c7d-4b8c-8f2c-5f2b7c7d4b8c",
+                            Name = "Visitor",
+                            NormalizedName = "VISITOR"
+                        },
+                        new
+                        {
+                            Id = "8d39103c-8d8e-5c9d-903d-6g3c8d8e5c9d",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "9e40214d-9e9f-6d0e-a14e-7h4d9e9f6d0e",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -237,9 +257,15 @@ namespace Pasteleria.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("FilePath")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -276,9 +302,15 @@ namespace Pasteleria.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -315,11 +347,14 @@ namespace Pasteleria.Data.Migrations
                     b.Property<decimal>("CurrentQuantity")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("IngredientId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid>("IngredientId1")
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("TEXT");
+
+                    b.Property<Guid>("IngredientId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("TEXT");
@@ -336,7 +371,7 @@ namespace Pasteleria.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IngredientId1");
+                    b.HasIndex("IngredientId");
 
                     b.ToTable("InventoryItems");
                 });
@@ -350,6 +385,9 @@ namespace Pasteleria.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -361,6 +399,9 @@ namespace Pasteleria.Data.Migrations
                     b.Property<string>("Instructions")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -389,8 +430,14 @@ namespace Pasteleria.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid>("IngredientId")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Quantity")
                         .HasColumnType("TEXT");
@@ -469,7 +516,7 @@ namespace Pasteleria.Data.Migrations
                 {
                     b.HasOne("Pasteleria.Shared.Models.Ingredient", "Ingredient")
                         .WithMany("InventoryItems")
-                        .HasForeignKey("IngredientId1")
+                        .HasForeignKey("IngredientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

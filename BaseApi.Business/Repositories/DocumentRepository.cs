@@ -22,10 +22,12 @@ namespace Pasteleria.Business.Repositories
 
         public async Task DeleteAsync(Guid id)
         {
-            var result = await GetByIdAsync(id);
+            var result = await _context.Documents.IgnoreQueryFilters().FirstOrDefaultAsync(d => d.Id == id);
             if (result != null)
             {
-                _context.Documents.Remove(result);
+                result.IsDeleted = true;
+                result.DeletedAt = DateTime.UtcNow;
+                _context.Documents.Update(result);
                 await _context.SaveChangesAsync();
             }
         }

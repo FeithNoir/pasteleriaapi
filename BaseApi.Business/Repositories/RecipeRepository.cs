@@ -22,11 +22,26 @@ namespace Pasteleria.Business.Repositories
 
         public async Task DeleteAsync(Guid id)
         {
-            var recipe = await GetByIdAsync(id);
+            var recipe = await _context.Recipes
+                .Include(r => r.RecipeIngredients)
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(r => r.Id == id);
+
             if (recipe != null)
             {
-                _context.RecipeIngredients.RemoveRange(recipe.RecipeIngredients);
-                _context.Recipes.Remove(recipe);
+                var now = DateTime.UtcNow;
+                
+                recipe.IsDeleted = true;
+                recipe.DeletedAt = now;
+                _context.Recipes.Update(recipe);
+
+                foreach (var ri in recipe.RecipeIngredients)
+                {
+                    ri.IsDeleted = true;
+                    ri.DeletedAt = now;
+                    _context.RecipeIngredients.Update(ri);
+                }
+
                 await _context.SaveChangesAsync();
             }
         }
@@ -52,7 +67,9 @@ namespace Pasteleria.Business.Repositories
             {
                 if (!dto.RecipeIngredients.Any(ri => ri.IngredientId == existingIngredient.IngredientId))
                 {
-                    _context.RecipeIngredients.Remove(existingIngredient);
+                    existingIngredient.IsDeleted = true;
+                    existingIngredient.DeletedAt = DateTime.UtcNow;
+                    _context.RecipeIngredients.Update(existingIngredient);
                 }
             }
 

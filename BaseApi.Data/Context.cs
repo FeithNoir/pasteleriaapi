@@ -14,6 +14,13 @@ namespace Base.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Global Query Filter for Soft Delete
+            modelBuilder.Entity<Recipe>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<Ingredient>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<InventoryItem>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<Document>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<RecipeIngredient>().HasQueryFilter(e => !e.IsDeleted);
+
             // Seed Roles
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole { Id = "7c280f2b-7c7d-4b8c-8f2c-5f2b7c7d4b8c", Name = "Visitor", NormalizedName = "VISITOR" },
