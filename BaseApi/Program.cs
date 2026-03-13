@@ -1,6 +1,7 @@
 using Base.Data;
 using Base.Shared.Models;
 using Microsoft.AspNetCore.Identity;
+using Pasteleria.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,13 +12,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Register Exception Handler
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 // Agrega el contexto de base de datos utilizando ContextFactory
 builder.Services.AddDbContext(builder.Configuration);
 
 // Agrega los servicios personalizados de repositorios y servicios
 builder.Services.AddCustomServices();
 
-// Agrega los servicios personalizados de autenticación y correo electrónico
+// Agrega los servicios personalizados de autenticaciï¿½n y correo electrï¿½nico
 builder.Services.AddCustomAuthenticationAndEmailServices(builder.Configuration);
 
 builder.Services.AddIdentity<User, IdentityRole>(
@@ -35,6 +40,8 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+app.UseExceptionHandler();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
