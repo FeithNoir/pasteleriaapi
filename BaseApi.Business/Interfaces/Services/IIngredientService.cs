@@ -5,7 +5,7 @@ namespace Pasteleria.Business.Interfaces.Services
 {
     public interface IIngredientService
     {
-        Task<Result<List<ListIngredientDto>>> GetAllIngredientsAsync();
+        Task<Result<PagedList<ListIngredientDto>>> GetAllIngredientsAsync(int pageNumber, int pageSize);
         Task<Result<IngredientDto>> GetIngredientByIdAsync(Guid id);
         Task<Result<IngredientDto>> AddIngredientAsync(CreateIngredientDto ingredientDto);
         Task<Result<IngredientDto>> UpdateIngredientAsync(IngredientDto ingredientDto);

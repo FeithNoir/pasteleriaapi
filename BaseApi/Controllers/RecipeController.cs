@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Pasteleria.Business.Interfaces.Services;
 using Pasteleria.Shared.DTOs;
 using Pasteleria.Shared.Extensions;
+using Base.Shared.Extensions;
 using System.Net;
 
 namespace Pasteleria.Api.Controllers
@@ -23,14 +24,28 @@ namespace Pasteleria.Api.Controllers
         /// <returns>A list of recipes.</returns>
         [HttpGet]
         [ProducesResponseType(typeof(ApiResponse<List<ListRecipeDto>>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var result = await _recipeService.GetAllRecipesAsync();
-            if (result.IsSuccessful)
+            var result = await _recipeService.GetAllRecipesAsync(pageNumber, pageSize);
+            if (result.IsSuccessful && result.Data != null)
             {
-                return Ok(ApiResponse<List<ListRecipeDto>>.SuccessResponse(result.Data, "Recipes retrieved successfully."));
+                var pagination = MapToPaginationDto(result.Data);
+                return Ok(ApiResponse<List<ListRecipeDto>>.SuccessResponse(result.Data.Items, "Recipes retrieved successfully.", (int)HttpStatusCode.OK, pagination));
             }
             return BadRequest(ApiResponse<List<ListRecipeDto>>.FailureResponse("Failed to retrieve recipes.", result.Errors));
+        }
+
+        private PaginationDto MapToPaginationDto<T>(PagedList<T> pagedList)
+        {
+            return new PaginationDto
+            {
+                CurrentPage = pagedList.CurrentPage,
+                TotalPages = pagedList.TotalPages,
+                PageSize = pagedList.PageSize,
+                TotalCount = pagedList.TotalCount,
+                HasPrevious = pagedList.HasPrevious,
+                HasNext = pagedList.HasNext
+            };
         }
 
         /// <summary>

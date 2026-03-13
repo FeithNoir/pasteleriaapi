@@ -5,7 +5,7 @@ namespace Pasteleria.Business.Interfaces.Services
 {
     public interface IDocumentService
     {
-        Task<Result<List<ListDocumentDto>>> GetAllDocumentsAsync();
+        Task<Result<PagedList<ListDocumentDto>>> GetAllDocumentsAsync(int pageNumber, int pageSize);
         Task<Result<DocumentDto>> GetDocumentByIdAsync(Guid id);
         Task<Result<DocumentDto>> AddDocumentAsync(CreateDocumentDto documentDto);
         Task<Result<DocumentDto>> UpdateDocumentAsync(DocumentDto documentDto);

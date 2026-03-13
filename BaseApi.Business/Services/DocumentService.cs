@@ -18,11 +18,13 @@ namespace Pasteleria.Business.Services
             _mapper = mapper;
         }
 
-        public async Task<Result<List<ListDocumentDto>>> GetAllDocumentsAsync()
+        public async Task<Result<PagedList<ListDocumentDto>>> GetAllDocumentsAsync(int pageNumber, int pageSize)
         {
-            var documents = await _documentRepository.GetAllAsync();
+            var (documents, totalCount) = await _documentRepository.GetAllPaginatedAsync(pageNumber, pageSize);
             var documentDtos = _mapper.Map<List<ListDocumentDto>>(documents);
-            return Result<List<ListDocumentDto>>.Success(documentDtos);
+
+            var pagedList = new PagedList<ListDocumentDto>(documentDtos, totalCount, pageNumber, pageSize);
+            return Result<PagedList<ListDocumentDto>>.Success(pagedList);
         }
 
         public async Task<Result<DocumentDto>> GetDocumentByIdAsync(Guid id)

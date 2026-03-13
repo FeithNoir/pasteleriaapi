@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Pasteleria.Business.Interfaces.Services;
 using Pasteleria.Shared.DTOs;
 using Pasteleria.Shared.Extensions;
+using Base.Shared.Extensions;
 using System.Net;
 
 namespace Pasteleria.Api.Controllers
@@ -23,14 +24,28 @@ namespace Pasteleria.Api.Controllers
         /// <returns>A list of inventory items.</returns>
         [HttpGet]
         [ProducesResponseType(typeof(ApiResponse<List<ListInventoryItemDto>>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var result = await _inventoryItemService.GetAllInventoryItemsAsync();
-            if (result.IsSuccessful)
+            var result = await _inventoryItemService.GetAllInventoryItemsAsync(pageNumber, pageSize);
+            if (result.IsSuccessful && result.Data != null)
             {
-                return Ok(ApiResponse<List<ListInventoryItemDto>>.SuccessResponse(result.Data, "Inventory items retrieved successfully."));
+                var pagination = MapToPaginationDto(result.Data);
+                return Ok(ApiResponse<List<ListInventoryItemDto>>.SuccessResponse(result.Data.Items, "Inventory items retrieved successfully.", (int)HttpStatusCode.OK, pagination));
             }
             return BadRequest(ApiResponse<List<ListInventoryItemDto>>.FailureResponse("Failed to retrieve inventory items.", result.Errors));
+        }
+
+        private PaginationDto MapToPaginationDto<T>(PagedList<T> pagedList)
+        {
+            return new PaginationDto
+            {
+                CurrentPage = pagedList.CurrentPage,
+                TotalPages = pagedList.TotalPages,
+                PageSize = pagedList.PageSize,
+                TotalCount = pagedList.TotalCount,
+                HasPrevious = pagedList.HasPrevious,
+                HasNext = pagedList.HasNext
+            };
         }
 
         /// <summary>

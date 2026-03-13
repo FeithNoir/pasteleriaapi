@@ -20,11 +20,13 @@ namespace Pasteleria.Business.Services
             _mapper = mapper;
         }
 
-        public async Task<Result<List<ListInventoryItemDto>>> GetAllInventoryItemsAsync()
+        public async Task<Result<PagedList<ListInventoryItemDto>>> GetAllInventoryItemsAsync(int pageNumber, int pageSize)
         {
-            var inventoryItems = await _inventoryItemRepository.GetAllAsync();
+            var (inventoryItems, totalCount) = await _inventoryItemRepository.GetAllPaginatedAsync(pageNumber, pageSize);
             var inventoryItemDtos = _mapper.Map<List<ListInventoryItemDto>>(inventoryItems);
-            return Result<List<ListInventoryItemDto>>.Success(inventoryItemDtos);
+
+            var pagedList = new PagedList<ListInventoryItemDto>(inventoryItemDtos, totalCount, pageNumber, pageSize);
+            return Result<PagedList<ListInventoryItemDto>>.Success(pagedList);
         }
 
         public async Task<Result<InventoryItemDto>> GetInventoryItemByIdAsync(Guid id)

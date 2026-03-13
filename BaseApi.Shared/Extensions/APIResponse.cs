@@ -1,4 +1,5 @@
 using System.Net;
+using Pasteleria.Shared.DTOs;
 
 namespace Pasteleria.Shared.Extensions
 {
@@ -33,19 +34,25 @@ namespace Pasteleria.Shared.Extensions
         /// </summary>
         public int StatusCode { get; set; }
 
+        /// <summary>
+        /// Optional pagination metadata.
+        /// </summary>
+        public PaginationDto? Pagination { get; set; }
+
         public ApiResponse() { }
 
-        public ApiResponse(T? data, string message = "", bool isSuccess = true, int statusCode = 200)
+        public ApiResponse(T? data, string message = "", bool isSuccess = true, int statusCode = 200, PaginationDto? pagination = null)
         {
             Data = data;
             Message = message;
             IsSuccess = isSuccess;
             StatusCode = statusCode;
+            Pagination = pagination;
         }
 
-        public static ApiResponse<T> SuccessResponse(T? data, string message = "Request processed successfully.", int statusCode = 200)
+        public static ApiResponse<T> SuccessResponse(T? data, string message = "Request processed successfully.", int statusCode = 200, PaginationDto? pagination = null)
         {
-            return new ApiResponse<T>(data, message, true, statusCode);
+            return new ApiResponse<T>(data, message, true, statusCode, pagination);
         }
 
         public static ApiResponse<T> FailureResponse(string message = "Request failed.", List<string>? errors = null, int statusCode = 400)

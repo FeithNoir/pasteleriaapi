@@ -5,7 +5,7 @@ namespace Pasteleria.Business.Interfaces.Services
 {
     public interface IInventoryItemService
     {
-        Task<Result<List<ListInventoryItemDto>>> GetAllInventoryItemsAsync();
+        Task<Result<PagedList<ListInventoryItemDto>>> GetAllInventoryItemsAsync(int pageNumber, int pageSize);
         Task<Result<InventoryItemDto>> GetInventoryItemByIdAsync(Guid id);
         Task<Result<InventoryItemDto>> AddInventoryItemAsync(CreateInventoryItemDto inventoryItemDto);
         Task<Result<InventoryItemDto>> UpdateInventoryItemAsync(InventoryItemDto inventoryItemDto);

@@ -51,6 +51,18 @@ namespace Pasteleria.Business.Repositories
             return await _context.Recipes.AsNoTracking().ToListAsync();
         }
 
+        public async Task<(List<Recipe> Items, int TotalCount)> GetAllPaginatedAsync(int pageNumber, int pageSize)
+        {
+            var totalCount = await _context.Recipes.CountAsync();
+            var items = await _context.Recipes
+                .AsNoTracking()
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalCount);
+        }
+
         public async Task<Recipe?> GetByIdAsync(Guid id)
         {
             return await _context.Recipes.AsNoTracking().Include(r => r.RecipeIngredients).ThenInclude(ri => ri.Ingredient).FirstOrDefaultAsync(r => r.Id == id);

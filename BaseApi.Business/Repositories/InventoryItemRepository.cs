@@ -37,6 +37,18 @@ namespace Pasteleria.Business.Repositories
             return await _context.InventoryItems.AsNoTracking().ToListAsync();
         }
 
+        public async Task<(List<InventoryItem> Items, int TotalCount)> GetAllPaginatedAsync(int pageNumber, int pageSize)
+        {
+            var totalCount = await _context.InventoryItems.CountAsync();
+            var items = await _context.InventoryItems
+                .AsNoTracking()
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalCount);
+        }
+
         public async Task<InventoryItem?> GetByIdAsync(Guid id)
         {
             return await _context.InventoryItems.Include(i => i.Ingredient).AsNoTracking().FirstOrDefaultAsync(r => r.Id == id);

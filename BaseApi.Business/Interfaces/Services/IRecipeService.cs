@@ -5,7 +5,7 @@ namespace Pasteleria.Business.Interfaces.Services
 {
     public interface IRecipeService
     {
-        Task<Result<List<ListRecipeDto>>> GetAllRecipesAsync();
+        Task<Result<PagedList<ListRecipeDto>>> GetAllRecipesAsync(int pageNumber, int pageSize);
         Task<Result<RecipeDto>> GetRecipeByIdAsync(Guid id);
         Task<Result<RecipeDto>> AddRecipeAsync(CreateRecipeDto recipeDto);
         Task<Result<RecipeDto>> UpdateRecipeAsync(RecipeDto recipeDto);
