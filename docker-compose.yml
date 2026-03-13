@@ -1,30 +1,30 @@
 services:
-  microbio-db:
+  pasteleria-db:
     image: mysql:8.0
-    container_name: microbio-db
+    container_name: pasteleria-db
     environment:
       MYSQL_ROOT_PASSWORD: BioUser.01
-      MYSQL_DATABASE: microbio
+      MYSQL_DATABASE: pasteleria
       MYSQL_USER: biouser
       MYSQL_PASSWORD: BioUser.01
     ports:
       - "3312:3312"
     volumes:
-      - microbio-db-data:/var/lib/mysql
+      - pasteleria-db-data:/var/lib/mysql
 
-  microbio-app:
-    image: microbio-app
-    container_name: microbio-app
+  pasteleria-app:
+    image: pasteleria-app
+    container_name: pasteleria-app
     build:
       context: .
       dockerfile: Dockerfile
     environment:
-      - ConnectionStrings__DefaultConnection=Server=microbio-db;Port=3306;Database=microbio;User=biouser;Password=BioUser.01;
+      - ConnectionStrings__DefaultConnection=Server=pasteleria-db;Port=3306;Database=pasteleria;User=biouser;Password=BioUser.01;
     ports:
       - "5000:5000"
     depends_on:
-      - microbio-db
+      - pasteleria-db
 
 volumes:
-  microbio-db-data:
+  pasteleria-db-data:
   

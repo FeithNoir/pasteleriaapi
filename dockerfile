@@ -4,15 +4,15 @@ WORKDIR /src
 
 # Copiar los archivos de solución y restaurar las dependencias
 COPY *.sln .
-COPY MicroBioDb/*.csproj ./MicroBioDb/
-COPY MicroBioDb.Data/*.csproj ./MicroBioDb.Data/
-COPY MicroBioDb.Shared/*.csproj ./MicroBioDb.Shared/
-COPY MicroBioDb.Business/*.csproj ./MicroBioDb.Business/
+COPY Pasteleria.Api/*.csproj ./Pasteleria.Api/
+COPY Pasteleria.Data/*.csproj ./Pasteleria.Data/
+COPY Pasteleria.Shared/*.csproj ./Pasteleria.Shared/
+COPY Pasteleria.Business/*.csproj ./Pasteleria.Business/
 RUN dotnet restore
 
 # Copiar el resto del código y compilar la aplicación
 COPY . .
-WORKDIR /src/MicroBioDb
+WORKDIR /src/Pasteleria.Api
 RUN dotnet build -c Release -o /app/build
 
 # Publicar la aplicación
@@ -29,4 +29,4 @@ COPY --from=build /app/publish .
 EXPOSE 5000
 
 # Comando para ejecutar la aplicación
-ENTRYPOINT ["dotnet", "MicroBioDb.dll"]
+ENTRYPOINT ["dotnet", "Pasteleria.Api.dll"]

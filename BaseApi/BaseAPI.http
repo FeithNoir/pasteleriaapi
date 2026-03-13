@@ -1,6 +1,0 @@
-@MicroBioDb_HostAddress = http://localhost:5003
-
-GET {{MicroBioDb_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

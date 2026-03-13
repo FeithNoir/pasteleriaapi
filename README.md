@@ -57,7 +57,7 @@ Para llevar este proyecto al siguiente nivel de robustez y profesionalismo, se c
 1.  **SDK de .NET 8.0:** Asegúrate de tener instalada la última versión de .NET.
 2.  **Configuración:** Revisa `appsettings.json` para las claves JWT y la ruta de la base de datos SQLite.
 3.  **Base de Datos:** El proyecto ya incluye una base de datos SQLite preconfigurada. Si deseas reiniciarla, usa: `dotnet ef database update`.
-4.  **Ejecutar:** `dotnet run` dentro de la carpeta `BaseApi`.
+60: 4.  **Ejecutar:** `dotnet run` dentro de la carpeta `Pasteleria.Api`.
 5.  **Swagger:** Accede a `http://localhost:5000/swagger` para ver la documentación interactiva.
 
 ---
